@@ -1,0 +1,93 @@
+logging:
+    level:
+      root: DEBUG
+
+server:
+  port: 8080
+
+byl:
+  datasource-primary:
+    enabled: true
+  addTraceInApiException: true
+  isApiAuditable: true
+  excludeAuditApi: '/api-docs/swagger-config,/api-docs,/swagger-ui,/swagger-resources,/v2,/manage/health,/cache/health,/container/health,/master/health,/order/health,/vas/health'
+
+spring:
+  cloud:
+    config:
+      enabled: false
+  jackson:
+    mapper:
+      accept_case_insensitive_properties: true
+  profiles:
+    active: ${SHORT_ENV}
+    include: server_h2
+
+  # Seguridad
+  security:
+    user:
+      name: mock
+      password: ''
+      ip-white: localhost,127.0.0.1
+
+  # BBDD embebida H2 en memoria
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        web-allow-others: true
+
+  # Datasources
+  datasource:
+    datasource-initializer-enabled: true
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      driverClassName: org.h2.Driver
+      auto-commit: true
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    jdbcUrl: jdbc:h2:mem:testdb;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_UPPER=false;
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    poolName: HikariCP-Principal
+
+  # Configuración JPA e Hibernate
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+        show_sql: false
+        format_sql: true
+        jdbc:
+          fetch_size: 100
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+        cache:
+          use_query_cache: false
+          use_second_level_cache: false
+          use_structured_entries: false
+          use_minimal_puts: false
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+
+  sleuth:
+    jdbc:
+      p6spy:
+        enable-logging: true
+        tracing:
+          include-parameter-values: true
+
+# Para ver los valores en las querys de Hibernate
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type:
+#          descriptor:
+#            sql: trace
