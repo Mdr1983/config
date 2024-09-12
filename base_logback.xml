@@ -2,7 +2,8 @@
 <!-- Auth en cabecera Authorization -->
 <configuration>
 
-  <property name="url-elastic" value="http://localhost:9200/_bulk" />
+  <property name="url-elastic"
+    value="https://elasticsearch-sas.es.westeurope.azure.elastic-cloud.com:9243/_bulk" />
 
   <property resource="application.yml" />
 
@@ -12,20 +13,31 @@
   <springProperty scope="context" name="profile" source="spring.profiles.active"
     defaultValue="local" />
 
+  <springProperty scope="context" name="elasticHost" source="elasticsearch.host" defaultValue="" />
+  <springProperty scope="context" name="elasticAuthorizationType"
+    source="elasticsearch.authorization.type"
+    defaultValue="" />
+  <springProperty scope="context" name="elasticAuthorizationPassword"
+    source="elasticsearch.authorization.password"
+    defaultValue="" />
   <springProperty scope="context" name="elasticTimeout" source="elasticsearch.timeout"
     defaultValue="30000" />
   <springProperty scope="context" name="elasticLogLevel" source="elasticsearch.log-level"
     defaultValue="INFO" />
+  <springProperty scope="context" name="elasticApiKey" source="elasticsearch.api-key"
+                  defaultValue=""/>
 
   <logger name="org" level="WARN" />
   <logger name="_org" level="WARN" />
   <logger name="reactor" level="WARN" />
   <logger name="io" level="WARN" />
   <logger name="com.zaxxer" level="INFO" />
+  <logger name="com.azure.core.amqp" level="WARN" />
+  <logger name="com.azure.messaging" level="WARN" />
+  <logger name="com.azure.messaging.servicebus.LockRenewalOperation" level="INFO" />
   <logger name="com.microsoft.sqlserver.jdbc.internals" level="ERROR" />
   <logger name="javax.management.mbeanserver" level="ERROR" />
   <logger name="sun.rmi.server" level="ERROR" />
-  <logger name="com.internetitem" level="DEBUG" />
 
   <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
     <connectTimeout>${elasticTimeout}</connectTimeout> <!-- optional (in ms, default 30000) -->
@@ -33,7 +45,7 @@
     <errorsToStderr>true</errorsToStderr> <!-- optional (default false) -->
     <includeCallerData>false</includeCallerData> <!-- optional (default false) -->
     <includeMdc>true</includeMdc> <!-- optional (default false) -->
-    <index>${name}</index>
+    <index>desarrollo</index>
     <loggerName>es-logger</loggerName> <!-- optional -->
     <logsToStderr>false</logsToStderr> <!-- optional (default false) -->
     <maxMessageSize>-1</maxMessageSize> <!-- optional (default -1 -->
@@ -48,6 +60,10 @@
       <property>
         <name>event.dataset</name>
         <value>${name}</value>
+      </property>
+      <property>
+        <name>taskforce</name>
+        <value>${TASK_FORCE}</value>
       </property>
       <property>
         <name>app</name>
@@ -94,6 +110,10 @@
         <name>Content-Type</name>
         <value>application/json</value>
       </header>
+      <header>
+        <name>Authorization</name>
+        <value>ApiKey ${elasticApiKey}</value>
+      </header>
     </headers>
   </appender>
 
@@ -107,7 +127,6 @@
 
   <logger name="es-error-logger" level="INFO" additivity="false">
     <appender-ref ref="CONSOLE" />
-	<appender-ref ref="ELASTIC" />
   </logger>
 
   <logger name="es-logger" level="INFO" additivity="false">
@@ -119,19 +138,15 @@
     </appender>
   </logger>
 
-  <!--<include resource="logback_conf.xml" />-->
+  <include resource="logback_conf.xml" />
 
-  <!--<if
+  <if
     condition='!property("profile").contains("test") &amp;&amp; !property("profile").contains("local")'>
     <then>
       <root level="${elasticLogLevel}">
         <appender-ref ref="ELASTIC" />
       </root>
     </then>
-  </if>-->
-  
-  <root level="DEBUG">
-    <appender-ref ref="CONSOLE"/>
-    <appender-ref ref="ELASTIC"/>
-  </root>
+  </if>
+
 </configuration>
