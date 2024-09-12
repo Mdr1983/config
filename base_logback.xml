@@ -119,7 +119,7 @@
     </appender>
   </logger>
 
-  <include resource="logback_conf.xml" />
+  <!--<include resource="logback_conf.xml" />-->
 
   <!--<if
     condition='!property("profile").contains("test") &amp;&amp; !property("profile").contains("local")'>
