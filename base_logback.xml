@@ -9,11 +9,6 @@
 
   <logger name="org" level="WARN"/>
   <logger name="_org" level="WARN"/>
-  <logger name="reactor" level="WARN"/>
-  <logger name="io" level="WARN"/>
-  <logger name="com.microsoft.sqlserver.jdbc.internals" level="ERROR"/>
-  <logger name="javax.management.mbeanserver" level="ERROR"/>
-  <logger name="sun.rmi.server" level="ERROR"/>
 
   <appender name="ELASTIC" class="com.mdemanuel.init.config.LogbackCompatibilityWrapper4ElasticsearchAppender">
     <url>${url-elastic}</url>
